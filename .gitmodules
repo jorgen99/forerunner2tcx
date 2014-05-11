@@ -1,0 +1,3 @@
+[submodule "garmin-dev"]
+	path = garmin-dev
+	url = https://github.com/cstrelioff/garmin-dev.git

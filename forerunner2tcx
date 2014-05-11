@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# What dir is the script running in?
+#  
+# Copied from: "Can a Bash script tell what directory it's stored in?"
+# http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+SOURCE="${BASH_SOURCE[0]}"
+# resolve $SOURCE until the file is no longer a symlink
+while [ -h "$SOURCE" ]; do 
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  # if $SOURCE was a relative symlink, we need to resolve it relative to
+  # the path where the symlink file was located
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" 
+done
+script_dir="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+
+# Make garmin_save_runs store the runs i the dumps-dir
+dumps_dir="$script_dir/dumps"
+mkdir -p $dumps_dir
+export GARMIN_SAVE_RUNS=$dumps_dir
+
+garmin_save_runs
+
+# convert the last 10 gmn-files
+files=`find $dumps_dir -type f | sort | tail`
+
+for file in $files ; do 
+    dir_name=$(dirname $file)
+    year_month=${dir_name#*dumps/}
+    mkdir -p "tcx/$year_month"
+
+    filename=$(basename $file)
+    without_extension=${filename%.*}
+    tcx_name="tcx/$year_month/$without_extension.tcx"
+    if [[ ! -f $tcx_name ]] ; then
+        echo "creating $tcx_name"
+        $script_dir/garmin-dev/gmn2tcx $file > $tcx_name
+    fi
+done
