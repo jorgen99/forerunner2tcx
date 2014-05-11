@@ -28,5 +28,14 @@ must run
     git submodule init
     git submodule update
 
+Now we're ready to go. Connect your watch to your computer and run:
+
+    forerunner2tcx
+
+This will download the files from the watch into the dumps-dir and
+export the tcx-files to the tcx-dir.
+
+
+    
 
 
