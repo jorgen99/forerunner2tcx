@@ -29,11 +29,11 @@ files=`find $dumps_dir -type f | sort | tail`
 for file in $files ; do 
     dir_name=$(dirname $file)
     year_month=${dir_name#*dumps/}
-    mkdir -p "tcx/$year_month"
+    mkdir -p "$script_dir/tcx/$year_month"
 
     filename=$(basename $file)
     without_extension=${filename%.*}
-    tcx_name="tcx/$year_month/$without_extension.tcx"
+    tcx_name="$script_dir/tcx/$year_month/$without_extension.tcx"
     if [[ ! -f $tcx_name ]] ; then
         echo "creating $tcx_name"
         $script_dir/garmin-dev/gmn2tcx $file > $tcx_name
